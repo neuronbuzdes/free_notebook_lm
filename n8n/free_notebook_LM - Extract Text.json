@@ -1,0 +1,343 @@
+{
+  "name": "free_notebook_LM - Extract Text",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "filePath"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        384
+      ],
+      "id": "ae4b374f-f514-4551-9443-a9421edaa4e9",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://yfvmutoxmibqzvyklggr.supabase.co/storage/v1/object/sign/sources/{{ $json.filePath }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"expiresIn\": 60\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        384
+      ],
+      "id": "e22cf437-761c-48e4-b9c9-274d3c84a29e",
+      "name": "Generate Signed URL"
+    },
+    {
+      "parameters": {
+        "url": "=https://yfvmutoxmibqzvyklggr.supabase.co/storage/v1/{{ $json.signedURL }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        384
+      ],
+      "id": "35b37b8e-c4c7-4013-bd46-acea9f841846",
+      "name": "Download File"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.headers[\"content-type\"] }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "dc0dbe8c-70d5-4127-95f8-0fbd3f1a6bad"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2307a9d5-7872-49dc-9aeb-60697b91dc84",
+                    "leftValue": "={{ $json.headers[\"content-type\"] }}",
+                    "rightValue": "audio/mpeg",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "87532eb7-b821-4d84-9d8e-c17136b0a88a",
+                    "leftValue": "={{ $json.headers[\"content-type\"] }}",
+                    "rightValue": "text/plain",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        384
+      ],
+      "id": "e7859c3d-356a-43a5-80db-e7721bed9012",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        880,
+        192
+      ],
+      "id": "a2c6f283-951f-4e1c-a13f-901e4415e6c3",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        880,
+        384
+      ],
+      "id": "f9266e87-f24e-4e78-aaa6-32a84f8115b4",
+      "name": "OpenAI"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1f5bee5d-939c-4df3-8e7d-0696ac3aa702",
+              "name": "text",
+              "value": "={{ $('Download File').item.json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        592
+      ],
+      "id": "9d608b75-49f8-4501-90a6-aec945af77e1",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9fea51c0-b3a9-49b5-8608-3264c9d00304",
+              "name": "extracted_text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        384
+      ],
+      "id": "857b51e3-5e8d-4e1d-865f-04065a47c194",
+      "name": "Extracted Text"
+    },
+    {
+      "parameters": {
+        "content": "## To Do \n- Configure the Supabase nodes to reference your Project\n- Update the Host of the \"HTTP Requests\" to hit your project\n- Setup OpenAI credentials",
+        "width": 680,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        304
+      ],
+      "id": "af5ae60f-1b80-4c7f-89bb-bb2f1538e271",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Generate Signed URL": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Generate Signed URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Extracted Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Extracted Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Extracted Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a2f20746-d91d-4865-a347-b525a9b7038c",
+  "meta": {
+    "instanceId": "89164dda4ce92de0ada0805d8089f49081e3079406b5438030a1c7feb1892f31"
+  },
+  "id": "RpJzdIHw60CjAFLy",
+  "tags": []
+}
