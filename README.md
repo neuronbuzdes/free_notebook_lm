@@ -64,7 +64,7 @@ This project is built with a modern, powerful stack:
 
 ## Getting Started: A Guide for No-Coders to Test and Customize
 
-This guide provides the quickest way to get InsightsLM up and running so you can test, customize, and experiment.
+This guide provides the quickest way to get free_notebook_lm up and running so you can test, customize, and experiment.
 
 I recommend you following in our video here for the full step by step guide - [https://www.youtube.com/@NeuralNetworksAI](https://www.youtube.com/@NeuralNetworksAI)
 
@@ -75,7 +75,7 @@ You will need a notepad file open to copy and paste in various credentials and d
     * Create a new project. Paste in your `database password` into your open notepad file as you will need this later.
 2.  **Create GitHub Account & Repo from Template**
     * If you don't have one, create a free account on [GitHub](https://github.com/).
-    * Navigate to the InsightsLM template repository here: [**https://github.com/neuronbuzdes/free_notebook_lm**](https://github.com/neuronbuzdes/free_notebook_lm)
+    * Navigate to the free_notebook_lm template repository here: [https://github.com/neuronbuzdes/free_notebook_lm](https://github.com/neuronbuzdes/free_notebook_lm)
     * Click the `Use this template` button to create a copy of the repository in your own GitHub account. Fill out the form.
 3.  **Import into an AI-Coding Editor (Bolt.new)**
     * Create an account on [Bolt.new](https://bolt.new/) as it supports Supabase integration. (While the project was built on Loveable, it is currently quite difficult to import existing Github projects into Loveable)
@@ -84,7 +84,7 @@ You will need a notepad file open to copy and paste in various credentials and d
     * Once connected, the Supabase Edge Functions will auto-deploy. You will need to approve the running of the migration script to create the data structures in Supabase.
 4.  **Import and Configure N8N Workflows**
     * The `/n8n` directory in this repository contains the JSON files for the required N8N workflows. There are 2 approaches here.
-        1. The easiest is to import the "Import_Insights_LM_Workflows.json" file into a new workflow in n8n and follow the steps in the video. This includes configuring an n8n API key which will be used to auto-create all workflows needed by the system. You will also need to set various credentials.
+        1. The easiest is to import the "free_notebook_lm_Workflows.json" file into a new workflow in n8n and follow the steps in the video. This includes configuring an n8n API key which will be used to auto-create all workflows needed by the system. You will also need to set various credentials.
         2. Instead of using the above workflow importer, you can instead download and import the 6 JSON workflows in this directory. You will need to go node by node in each workflow to configure them for your services. (e.g. Supabase, OpenAI, Gemini, Sub-Workflows etc). Follow the TODOs in each workflow.
 5.  **Add N8N Webhooks to Supabase Secrets**
     * Your N8N workflows are triggered by webhooks from the Supabase Edge Functions. If you used the workflow importer, you will have the list of N8N secrets to create. Otherwise you'll need to gather these from the various workflows.
@@ -98,7 +98,7 @@ You will need a notepad file open to copy and paste in various credentials and d
         * NOTEBOOK_GENERATION_AUTH (This is the password for the custom Header Auth for each n8n Webhook)
         * OPENAI_API_KEY (This is used in the Generate Note Title edge function)
 6.  **Test & Customize**
-    * That's it! Your instance of InsightsLM should now be live.
+    * That's it! Your instance of free_notebook_lm should now be live.
     * You can now test the application, upload documents, and start chatting.
     * Within Bolt.new you can also deploy this to Netlify
 
@@ -118,10 +118,10 @@ This codebase is distributed under the MIT License.
 
 ## A Note on n8n's Sustainable Use License
 
-While InsightsLM is fully open-sourced and Supabase is also open source, it's important to be aware that n8n, which powers much of the backend automation, is not open source in the traditional sense.
+While free_notebook_lm is fully open-sourced and Supabase is also open source, it's important to be aware that n8n, which powers much of the backend automation, is not open source in the traditional sense.
 
 n8n is distributed under a [Sustainable Use License](https://github.com/n8n-io/n8n/blob/master/LICENSE.md). This license allows free usage for internal business purposes, including hosting workflows within your company or organization.
 
-However, if you plan to use InsightsLM as part of a commercial SaaS offering—such as reselling access or hosting a public version for multiple clients—you may need to obtain an n8n Enterprise License. We’re not lawyers, so we recommend that you review the n8n license and contacting their team if your use case falls into a commercial category.
+However, if you plan to use free_notebook_lm as part of a commercial SaaS offering—such as reselling access or hosting a public version for multiple clients—you may need to obtain an n8n Enterprise License. We’re not lawyers, so we recommend that you review the n8n license and contacting their team if your use case falls into a commercial category.
 
 Alternatives: If your use case is restricted by the n8n license, one potential option is to convert key workflows into Supabase Edge Functions. This would allow you to fully avoid using n8n in production.
